@@ -30,8 +30,21 @@ const deleteWatchEntity = (req, res) => {
   res.send({ "message": `${parkCode} watch entity deleted` })
 }
 
+const checkWatched = async (req, res) => {
+  try {
+    const { userId, parkCode } = req.body
+    const result = await Watch.findOne({
+      where: { userId, parkCode }
+    })
+    res.send(result)
+  } catch (error) {
+    throw error
+  }
+}
+
 module.exports = {
   getUserWatchList,
   createWatchEntity,
-  deleteWatchEntity
+  deleteWatchEntity,
+  checkWatched
 }
