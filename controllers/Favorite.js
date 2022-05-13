@@ -22,15 +22,12 @@ const createFavoriteEntity = async (req, res) => {
 
 
 const deleteFavoriteEntity = (req, res) => {
-  try {
-    const favoriteEntityId = req.params.favoriteEntityId
-    Favorite.destroy({
-      where: { id: favoriteEntityId }
-    })
-    res.send({ "message": `Entity ${favoriteEntityId} deleted` })
-  } catch (error) {
-    throw error
-  }
+  const userId = req.params.userId
+  const parkCode = req.params.parkCode
+  Favorite.destroy({
+    where: { userId, parkCode }
+  })
+  res.send({ "message": `${parkCode} watch entity deleted` })
 }
 
 module.exports = {
