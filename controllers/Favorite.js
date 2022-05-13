@@ -30,8 +30,21 @@ const deleteFavoriteEntity = (req, res) => {
   res.send({ "message": `${parkCode} watch entity deleted` })
 }
 
+const checkFavorite = async (req, res) => {
+  try {
+    const { userId, parkCode } = req.body
+    const result = await Favorite.findOne({
+      where: { userId, parkCode }
+    })
+    res.send(result)
+  } catch (error) {
+    throw error
+  }
+}
+
 module.exports = {
   getUserFavoriteList,
   createFavoriteEntity,
-  deleteFavoriteEntity
+  deleteFavoriteEntity,
+  checkFavorite
 }
