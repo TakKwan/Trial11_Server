@@ -1,4 +1,4 @@
-const { User } = require('../models')
+const { User, Favorite, Watch } = require('../models')
 const middleware = require('../middleware')
 
 const register = async (req, res) => {
@@ -12,12 +12,15 @@ const login = async (req, res) => {
   try {
     const user = await User.findOne({
       where: { email: req.body.email },
-      raw: true
+      include: [{ model: Favorite }, { model: Watch }]
     })
+    console.log(user)
     if (user && (await middleware.comparePassword(user.passwordDigest, req.body.password))) {
       let payload = {
         id: user.id,
-        email: user.email
+        email: user.email,
+        watchlist: user.Watches,
+        favorites: user.Favorites
       }
       let token = middleware.createToken(payload)
       return res.send({ user: payload, token })
