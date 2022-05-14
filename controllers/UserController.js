@@ -19,8 +19,8 @@ const login = async (req, res) => {
       let payload = {
         id: user.id,
         email: user.email,
-        watchlist: user.Watches,
-        favorites: user.Favorites
+        watchlist: user.Watches.map(watch => watch.parkCode),
+        favorites: user.Favorites.map(favorite => favorite.parkCode)
       }
       let token = middleware.createToken(payload)
       return res.send({ user: payload, token })
