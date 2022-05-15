@@ -4,7 +4,7 @@ const middleware = require('../middleware')
 const userFieldsToPayload = [
   { fieldName: "id" },
   { fieldName: "email" },
-  { fieldName: "Watches", name: "watchList", transform: ws => ws?.map(w => w.parkCode) },
+  { fieldName: "Watches", name: "watchlist", transform: ws => ws?.map(w => w.parkCode) },
   { fieldName: "Favorites", name: "favorites", transform: fs => fs?.map(f => f.parkCode) },
 ]
 
