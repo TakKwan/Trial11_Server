@@ -30,12 +30,7 @@ const login = async (req, res) => {
       email: user.email
     })
 
-    const userPayload = {
-      id: user.id,
-      email: user.email,
-      watchlist: user.Watches.map(watch => watch.parkCode),
-      favorites: user.Favorites.map(favorite => favorite.parkCode)
-    }
+    const userPayload = toUserPayload(user)
 
     return res.send({ user: userPayload, token })
   } catch (error) {
@@ -43,10 +38,22 @@ const login = async (req, res) => {
   }
 }
 
+const toUserPayload = (user) => {
+  return {
+    id: user.id,
+    email: user.email,
+    watchlist: user.Watches.map(watch => watch.parkCode),
+    favorites: user.Favorites.map(favorite => favorite.parkCode)
+  }
+}
+
 const checkSession = async (req, res) => {
   const { payload } = res.locals
-  console.log(payload)
-  res.send(payload)
+  const user = await User.findOne({
+    where: { id: payload.id },
+    include: [{ model: Favorite }, { model: Watch }]
+  })
+  res.send(toUserPayload(user))
 }
 
 module.exports = {
