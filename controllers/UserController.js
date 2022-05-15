@@ -1,11 +1,23 @@
 const { User, Favorite, Watch } = require('../models')
 const middleware = require('../middleware')
 
+
+const toUserPayload = (user) => {
+  const userPayload = {
+    id: user.id,
+    email: user.email,
+    watchlist: user.Watches.map(watch => watch.parkCode),
+    favorites: user.Favorites.map(favorite => favorite.parkCode)
+  }
+
+  return userPayload;
+}
+
 const register = async (req, res) => {
   const { email, password, username } = req.body
   let passwordDigest = await middleware.hashPassword(password)
   const user = await User.create({ email, passwordDigest, username })
-  res.send(user)
+  res.send(toUserPayload(user))
 }
 
 const login = async (req, res) => {
@@ -35,15 +47,6 @@ const login = async (req, res) => {
     return res.send({ user: userPayload, token })
   } catch (error) {
     throw error
-  }
-}
-
-const toUserPayload = (user) => {
-  return {
-    id: user.id,
-    email: user.email,
-    watchlist: user.Watches.map(watch => watch.parkCode),
-    favorites: user.Favorites.map(favorite => favorite.parkCode)
   }
 }
 
