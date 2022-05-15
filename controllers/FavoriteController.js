@@ -13,6 +13,7 @@ const getUserFavoriteList = async (req, res) => {
 const createFavoriteEntity = async (req, res) => {
   try {
     const { userId, parkCode } = req.body
+    console.log("fetch favorites", userId, parkCode)
     const result = await Favorite.create({ userId, parkCode })
     res.send(result)
   } catch (error) {

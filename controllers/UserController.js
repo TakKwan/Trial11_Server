@@ -14,7 +14,6 @@ const login = async (req, res) => {
       where: { email: req.body.email },
       include: [{ model: Favorite }, { model: Watch }]
     })
-    console.log(user)
     if (user && (await middleware.comparePassword(user.passwordDigest, req.body.password))) {
       let payload = {
         id: user.id,
