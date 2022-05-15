@@ -1,14 +1,22 @@
 const { User, Favorite, Watch } = require('../models')
 const middleware = require('../middleware')
 
+const userFieldsToPayload = [
+  { fieldName: "id" },
+  { fieldName: "email" },
+  { fieldName: "Watches", name: "watchList", transform: ws => ws?.map(w => w.parkCode) },
+  { fieldName: "Favorites", name: "favorites", transform: fs => fs?.map(f => f.parkCode) },
+]
 
 const toUserPayload = (user) => {
-  const userPayload = {
-    id: user.id,
-    email: user.email,
-    watchlist: user.Watches.map(watch => watch.parkCode),
-    favorites: user.Favorites.map(favorite => favorite.parkCode)
-  }
+  const userPayload = {}
+
+  userFieldsToPayload.forEach(({ fieldName, name, transform }) => {
+    const value = typeof transform === "function" ? transform(user[fieldName]) : user[fieldName];
+    if (value) {
+      userPayload[name || fieldName] = value
+    }
+  })
 
   return userPayload;
 }
