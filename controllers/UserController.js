@@ -14,17 +14,30 @@ const login = async (req, res) => {
       where: { email: req.body.email },
       include: [{ model: Favorite }, { model: Watch }]
     })
-    if (user && (await middleware.comparePassword(user.passwordDigest, req.body.password))) {
-      let payload = {
-        id: user.id,
-        email: user.email,
-        watchlist: user.Watches.map(watch => watch.parkCode),
-        favorites: user.Favorites.map(favorite => favorite.parkCode)
-      }
-      let token = middleware.createToken(payload)
-      return res.send({ user: payload, token })
+
+    if (!user) {
+      res.status(401).send({ status: 'Error', msg: 'Unauthorized' })
     }
-    res.status(401).send({ status: 'Error', msg: 'Unauthorized' })
+
+    const isPasswordCorrect = await middleware.comparePassword(user.passwordDigest, req.body.password)
+
+    if (!isPasswordCorrect) {
+      res.status(401).send({ status: 'Error', msg: 'Unauthorized' })
+    }
+
+    const token = middleware.createToken({
+      id: user.id,
+      email: user.email
+    })
+
+    const userPayload = {
+      id: user.id,
+      email: user.email,
+      watchlist: user.Watches.map(watch => watch.parkCode),
+      favorites: user.Favorites.map(favorite => favorite.parkCode)
+    }
+
+    return res.send({ user: userPayload, token })
   } catch (error) {
     throw error
   }
@@ -32,6 +45,7 @@ const login = async (req, res) => {
 
 const checkSession = async (req, res) => {
   const { payload } = res.locals
+  console.log(payload)
   res.send(payload)
 }
 
